@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/8.3/phpunit.xsd"
+         backupGlobals="false"
+         colors="true"
+         bootstrap="vendor/autoload.php"
+         failOnRisky="true"
+         failOnWarning="true"
+>
+    <php>
+        <ini name="error_reporting" value="-1" />
+        <env name="APP_ENV" value="TEST" />
+        <env name="ENCRYPT_TOOL" value="/usr/local/bin/lcpencrypt" />
+        <env name="AWS_AWS_ACCESS_KEY_ID" value="123456" />
+        <env name="AWS_SECRET_ACCESS_KEY" value="123456" />
+        <env name="AWS_S3_BUCKET" value="buketName" />
+        <env name="AWS_S3_REGION" value="eu-west-1" />
+        <env name="LICENSE_SERVER_ENDPOINT" value="http://127.0.0.1:8989" />
+        <env name="LICENSE_SERVER_PROFILE" value="basic" />
+        <env name="LICENSE_SERVER_USERNAME" value="foo" />
+        <env name="LICENSES_SERVER_PASSWORD" value="bar" />
+        <env name="LICENSES_SERVER_PASSWORD" value="bar" />
+    </php>
+    <testsuites>
+        <testsuite name="readium encrypt Test Suite">
+            <directory>./tests</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory>./src</directory>
+        </whitelist>
+    </filter>
+</phpunit>

@@ -1,0 +1,47 @@
+{
+  "name": "xebook/readium-encrypt-lib",
+  "description": "Common interface for readium-lcp-server Encryption tool",
+  "keywords": [
+    "readium",
+    "drm"
+  ],
+  "homepage": "https://github.com/xercode/readium-encrypt-lib",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Xercode",
+      "homepage": "https://xercode.es"
+    },
+    {
+      "name": "jjbier",
+      "homepage": "https://github.com/jjbier"
+    }
+  ],
+  "require": {
+    "php": "^7.1",
+    "psr/log": "^1.1",
+    "symfony/console": "^4.3",
+    "symfony/dotenv": "^4.3",
+    "aws/aws-sdk-php": "^3.110",
+    "psr/http-message": "^1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "xeBook\\Readium\\Encrypt\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "xeBook\\Readium\\Encrypt\\Test\\": "tests"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0.x-dev"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^8.3",
+    "symfony/debug": "^4.3"
+  }
+}
