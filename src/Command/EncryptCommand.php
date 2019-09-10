@@ -2,6 +2,7 @@
 
 namespace xeBook\Readium\Encrypt\Command;
 
+use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,6 +14,8 @@ use xeBook\Readium\Encrypt\Filesystem\AwsS3Adapter;
 
 class EncryptCommand extends Command
 {
+    use LockableTrait;
+
     private const scheme_file = 'file';
     private const scheme_s3 = 's3';
 
@@ -85,6 +88,12 @@ class EncryptCommand extends Command
     {
         $io              = new SymfonyStyle($input, $output);
 
+        if (!$this->lock()) {
+            $io->warning('The command is already running in another process.');
+
+            return 0;
+        }
+
         $inputFilename      = $input->getArgument('source');
         $outputFilename         = $input->getOption('output');
         $contentId              = $input->getOption('contentId');
@@ -96,6 +105,7 @@ class EncryptCommand extends Command
 
         if($scheme !== self::scheme_s3 && $scheme !== self::scheme_file) {
             $io->error('Invalid protocol. Use s3 or file. Example s3://210/210_1567702120_5d713c68c4fbc_5d713c68c5068.pdf or file:///210/210_1567702120_5d713c68c4fbc_5d713c68c5068.pdf.');
+            $this->release();
             return -1;
         }
 
@@ -108,12 +118,17 @@ class EncryptCommand extends Command
 
         if(!file_exists($sourceFile)) {
             return $io->error(sprintf('The file %s not found.', $sourceFile));
+
+            $this->release();
+
             return -2;
         }
 
         $encryptResponse = $this->encrypt->run($sourceFile, $this->profile, $sendToLicenseServer, $contentId, $outputFilename);
 
         $io->text(json_encode($encryptResponse));
+
+        $this->release();
 
         return 0;
     }
