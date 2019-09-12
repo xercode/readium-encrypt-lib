@@ -3,12 +3,15 @@
 
 namespace xeBook\Readium\Encrypt;
 
+use Psr\Log\LoggerAwareTrait;
 use xeBook\Readium\Encrypt\Exception\InvalidArgumentException;
 use xeBook\Readium\Encrypt\Exception\EncryptException;
 use xeBook\Readium\Encrypt\Exception\FilesystemException;
 
 class Encrypt
 {
+    use LoggerAwareTrait;
+
     private const SUCCESS_CODE = 0;
 
     private const ERROR_CODES = [
@@ -27,6 +30,23 @@ class Encrypt
         80 => 'Error incorrect parameters for License Server.',
 
     ];
+
+    /**
+     * Logs with an arbitrary level.
+     *
+     * @param mixed  $level
+     * @param string $message
+     * @param array  $context
+     *
+     * @return void
+     */
+    public function log($level, $message, array $context = array())
+    {
+        if($this->logger !== null) {
+            $this->logger->log($level, $message, $context);
+        }
+    }
+
     /**
      * @var string
      */
@@ -141,6 +161,7 @@ class Encrypt
         $outputExecCommand         = [];
         $returnExitCodeExecCommand = null;
         $returnExec                = exec($command, $outputExecCommand, $returnExitCodeExecCommand);
+        $this->log('info', 'Run Encrypt command', ['command' => $command, 'outputExecCommand' => $outputExecCommand, 'returnExitCodeExecCommand' => $returnExitCodeExecCommand, 'returnExec' => $returnExec]);
 
         if ($returnExitCodeExecCommand !== self::SUCCESS_CODE) {
             if (array_key_exists($returnExitCodeExecCommand, self::ERROR_CODES)) {
