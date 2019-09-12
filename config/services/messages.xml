@@ -6,6 +6,8 @@
 
     <parameters>
         <parameter key="amqp.dsn">%env(resolve:MESSENGER_TRANSPORT_DSN)%</parameter>
+        <parameter key="amqp.exchange">%env(resolve:MESSENGER_TRANSPORT_EXCHANGE)%</parameter>
+        <parameter key="amqp.queue">%env(resolve:MESSENGER_TRANSPORT_QUEUE)%</parameter>
     </parameters>
     <services>
         <defaults public="false" />

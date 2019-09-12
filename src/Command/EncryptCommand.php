@@ -109,6 +109,22 @@ class EncryptCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $msg = new \xeBook\Readium\Encrypt\Message\EncryptedResource(
+            'a',
+            'b',
+            'b',
+            'b',
+            10,
+            'b',
+            'b',
+            'b',
+            true
+        );
+
+        $response = $this->messageBus->dispatch($msg);
+
+        return;
+
         $io = new SymfonyStyle($input, $output);
 
         if (!$this->lock()) {

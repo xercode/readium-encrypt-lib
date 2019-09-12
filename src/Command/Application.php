@@ -136,11 +136,16 @@ final class Application extends BaseApplication
         $container->addCompilerPass(new MessengerPass());
 
         $dns        = $container->getParameter('amqp.dsn');
+        $exchange   = $container->getParameter('amqp.exchange');
+        $queue      = $container->getParameter('amqp.queue');
 
 
         $config = [
             'buses'      => ['messenger.bus.default' => ['default_middleware' => true, 'middleware' => []]],
-            'transports' => ['amqp' => ['dsn' => $dns, 'options' => []]],
+            'transports' => ['amqp' => ['dsn' => $dns, 'options' => [ // amqp options
+                'exchange' => ['name' => $exchange, 'type' => 'topic'],
+                'queues' => [$queue  => []]
+            ]]],
             'routing'    => [\xeBook\Readium\Encrypt\Message\EncryptedResource::class => ['senders' => ['amqp'], 'send_and_handle' => false]],
             'enabled'    => true,
             'serializer'    => ['enabled' => true, 'format' => 'json', 'context' => []],
