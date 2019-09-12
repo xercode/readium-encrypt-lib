@@ -85,18 +85,6 @@ class Encrypt
             );
         }
 
-        if ($licenseServerEndpoint !== null && !filter_var($licenseServerEndpoint, FILTER_VALIDATE_URL)) {
-            throw new InvalidArgumentException(
-                'Incorrect parameters the License Server endpoint '.$licenseServerEndpoint.' is not valid url.', 20
-            );
-        }
-
-        if ($licenseServerEndpoint !== null && ($licenseServerUsername == null || $licenseServerPassword == null)) {
-            throw new InvalidArgumentException(
-                'Incorrect parameters,  License Server needs username and password,', 30
-            );
-        }
-
         $this->encryptTool           = $encryptTool;
         $this->licenseServerEndpoint = $licenseServerEndpoint;
         $this->licenseServerUsername = $licenseServerUsername;

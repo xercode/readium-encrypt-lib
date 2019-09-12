@@ -33,3 +33,22 @@ bin/encrypt s3://210/210_1567702120_5d713c68c4fbc_5d713c68c5068.pdf
 ```bash  
 bin/encrypt s3://210/210_1567702120_5d713c68c4fbc_5d713c68c5068.pdf -s 
 ``` 
+
+# Deploy
+Deployer will create the following directories on the host:
+
+* releases contains releases dirs,
+* shared contains shared files and dirs,
+* current symlink to current release.
+
+* Deploy into release
+
+```bash
+./vendor/bin/dep deploy staging -vvv
+```
+
+
+* Rollback into release 
+```bash
+./vendor/bin/dep rollback staging -vvv
+```
