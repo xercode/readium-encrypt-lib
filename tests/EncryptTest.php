@@ -26,7 +26,7 @@ class EncryptTest extends TestCase
         $this->encryptTool              = $_ENV['ENCRYPT_TOOL'];
         $this->licenseServerEndpoint    = $_ENV['LICENSE_SERVER_ENDPOINT'];
         $this->licenseServerUsername    = $_ENV['LICENSE_SERVER_USERNAME'];
-        $this->licenseServerPassword    = $_ENV['LICENSES_ERVER_PASSWORD'];
+        $this->licenseServerPassword    = $_ENV['LICENSE_SERVER_PASSWORD'];
     }
 
     public function filePaths()
@@ -102,7 +102,7 @@ class EncryptTest extends TestCase
         $input = $this->fixturesPath.'/210_1567702120_5d713c68c4fbc_5d713c68c5068.pdf';
         $encrypt = new Encrypt($this->encryptTool, $this->licenseServerEndpoint, $this->licenseServerUsername, $this->licenseServerPassword);
 
-        $encrypt->run( $input, 'basic', true, '123456', '/123456.failed');
+        $encrypt->run( $input, true, '123456', '/123456.failed');
     }
 
     public function testEncryptRunErrorOnNotifyingToServer()
@@ -112,6 +112,6 @@ class EncryptTest extends TestCase
         $input = $this->fixturesPath.'/210_1567702120_5d713c68c4fbc_5d713c68c5068.pdf';
         $encrypt = new Encrypt($this->encryptTool,'http://127.0.0.1', $this->licenseServerUsername, $this->licenseServerPassword);
 
-        $encrypt->run( $input, 'basic', true, '123456');
+        $encrypt->run( $input, true, '123456');
     }
 }

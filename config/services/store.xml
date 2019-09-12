@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service class="xeBook\Readium\Encrypt\Filesystem\AwsS3Adapter" id="xe_book.readium.encrypt.filesystem.aws_s3adapter">
+            <argument id="aws.s3.s3_client" type="service"/>
+            <argument type="string">%env(resolve:AWS_S3_BUCKET)%</argument>
+        </service>
+    </services>
+</container>

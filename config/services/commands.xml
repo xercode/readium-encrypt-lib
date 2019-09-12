@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service class="xeBook\Readium\Encrypt\Command\EncryptCommand" id="xe_book.readium.encrypt.command.encrypt_command">
+            <argument id="xe_book.readium.encrypt.encrypt" type="service"/>
+            <argument id="xe_book.readium.encrypt.filesystem.aws_s3adapter" type="service"/>
+            <argument id="messenger.bus.default" type="service"/>
+            <tag name="console.command"/>
+        </service>
+
+
+    </services>
+</container>

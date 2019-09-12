@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="aws.s3.s3_client" class="Aws\S3\S3Client">
+            <argument type="collection">
+                <argument key="version">latest</argument>
+                <argument key="region">%env(resolve:AWS_S3_REGION)%</argument>
+                <argument key="debug">false</argument>
+                <argument key="prefix"/>
+                <argument type="collection" key="credentials">
+                    <argument key="key">%env(resolve:AWS_ACCESS_KEY_ID)%</argument>
+                    <argument key="secret">%env(resolve:AWS_SECRET_ACCESS_KEY)%</argument>
+                </argument>
+            </argument>
+        </service>
+    </services>
+</container>

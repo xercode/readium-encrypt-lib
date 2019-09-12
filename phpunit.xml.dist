@@ -21,6 +21,7 @@
         <env name="LICENSE_SERVER_USERNAME" value="foo" />
         <env name="LICENSES_SERVER_PASSWORD" value="bar" />
         <env name="LICENSES_SERVER_PASSWORD" value="bar" />
+        <env name="MESSENGER_TRANSPORT_DSN" value="amqp://guest:guest@rabbitmq:5672/%2f/messages"/>
     </php>
     <testsuites>
         <testsuite name="readium encrypt Test Suite">

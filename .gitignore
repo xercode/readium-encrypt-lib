@@ -1,4 +1,6 @@
-vendor/
+/.env
+/var/
+/vendor/
 composer.lock
 phpunit.xml
 .php_cs.cache
@@ -7,5 +9,4 @@ composer.phar
 package.tar
 /packages.json
 /.phpunit
-.idea
-.env
+/.idea

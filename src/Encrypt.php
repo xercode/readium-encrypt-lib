@@ -48,22 +48,40 @@ class Encrypt
     private $licenseServerPassword;
 
     /**
+     * @var string|null
+     */
+    private $licenseServerProfile;
+
+    /**
      * Encrypt constructor.
      *
      * @param string      $encryptTool
      * @param string|null $licenseServerEndpoint
      * @param string|null $licenseServerUsername
      * @param string|null $licenseServerPassword
+     * @param string|null $licenseServerProfile
      */
     public function __construct(
         string $encryptTool,
         ?string $licenseServerEndpoint = null,
         ?string $licenseServerUsername = null,
-        ?string $licenseServerPassword = null
+        ?string $licenseServerPassword = null,
+        ?string $licenseServerProfile = 'basic'
     ) {
-        if (!file_exists($encryptTool) || !is_readable($encryptTool) || !is_executable($encryptTool)) {
+        if (!file_exists($encryptTool) ) {
             throw new InvalidArgumentException(
-                'The encrypt tool '.$encryptTool.' not exits or it is not readable or it is not executable.', 10
+                'The encrypt tool '.$encryptTool.' not exits.', 10
+            );
+        }
+        if (!is_readable($encryptTool)) {
+            throw new InvalidArgumentException(
+                'The encrypt tool '.$encryptTool.' is not readable.', 10
+            );
+        }
+
+        if (!is_executable($encryptTool)) {
+            throw new InvalidArgumentException(
+                'The encrypt tool '.$encryptTool.' is not executable.', 10
             );
         }
 
@@ -83,6 +101,7 @@ class Encrypt
         $this->licenseServerEndpoint = $licenseServerEndpoint;
         $this->licenseServerUsername = $licenseServerUsername;
         $this->licenseServerPassword = $licenseServerPassword;
+        $this->licenseServerProfile   = $licenseServerProfile;
     }
 
 
@@ -90,7 +109,6 @@ class Encrypt
      * lcpencrypt protects an epub/pdf file for usage in an lcp environment
      *
      * @param string      $input               source epub/pdf file locator (file system or http GET)
-     * @param string      $profile             encryption profile to use default basic.
      * @param bool        $sendToLicenseServer optional send to the License server
      * @param string|null $contentId           optional content identifier, if omitted a new one will be generated
      * @param string|null $output              optional target location for protected content (file system or http PUT)
@@ -99,7 +117,6 @@ class Encrypt
      */
     public function run(
         string $input,
-        ?string $profile = 'basic',
         ?bool $sendToLicenseServer = true,
         ?string $contentId = null,
         ?string $output = null
@@ -114,7 +131,7 @@ class Encrypt
             $output   = sys_get_temp_dir().DIRECTORY_SEPARATOR.$filename;
         }
 
-        $command = sprintf('%s -input "%s" -profile "%s" ', $this->encryptTool, $input, $profile);
+        $command = sprintf('%s -input "%s" -profile "%s" ', $this->encryptTool, $input, $this->licenseServerProfile);
 
         if ($sendToLicenseServer == true) {
             $command .= sprintf(

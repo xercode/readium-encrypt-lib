@@ -2,11 +2,17 @@
 <?php
 
 use Aws\S3\S3Client;
-use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Component\Messenger\MessageBus;
+use Symfony\Component\Messenger\Middleware\FailedMessageProcessingMiddleware;
+use Symfony\Component\Messenger\Middleware\SendMessageMiddleware;
+use Symfony\Component\Messenger\Tests\Fixtures\DummyMessage;
+use Symfony\Component\Messenger\Transport\AmqpExt\AmqpTransportFactory;
+use Symfony\Component\Messenger\Transport\Serialization\Serializer;
+use xeBook\Readium\Encrypt\Command\Application;
 use xeBook\Readium\Encrypt\Command\EncryptCommand;
 use xeBook\Readium\Encrypt\Encrypt;
 use xeBook\Readium\Encrypt\Filesystem\AwsS3Adapter;
@@ -47,25 +53,10 @@ if ($debug) {
         Debug::enable();
     }
 }
-//// ... register services
-$awsS3Adapter = new AwsS3Adapter(new S3Client([
-    'version' => 'latest',
-    'region'  => $_ENV['AWS_S3_REGION'],
-    'debug'   => false,
-    'prefix'  => '',
-    'credentials'  => [
-        'key'       => $_ENV['AWS_AWS_ACCESS_KEY_ID'],
-        'secret'    => $_ENV['AWS_SECRET_ACCESS_KEY']
-    ]
-
-]), $_ENV['AWS_S3_BUCKET']);
-
-$encrypt = new Encrypt($_ENV['ENCRYPT_TOOL'], $_ENV['LICENSE_SERVER_ENDPOINT'], $_ENV['LICENSE_SERVER_USERNAME'], $_ENV['LICENSE_SERVER_PASSWORD']);
 //// ... register commands
 
-$application = new Application('readium-encrypt-tool', '1.0');
-$command = new EncryptCommand($encrypt, $awsS3Adapter, $_ENV['LICENSE_SERVER_PROFILE']);
-$application->add($command);
-$application->setDefaultCommand($command->getName(), true);
+$application = new Application($env, $debug);
+$application->setDefaultCommand(EncryptCommand::getDefaultName(), true);
+
 $application->run($input);
 
