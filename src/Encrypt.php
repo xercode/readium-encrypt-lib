@@ -135,8 +135,20 @@ class Encrypt
         }
 
         if ($output === null) {
-            $filename = basename($input);
-            $output   = sys_get_temp_dir().DIRECTORY_SEPARATOR.$filename;
+            $extension = pathinfo($input, 'PATHINFO_EXTENSION');
+            $filename = basename($input, $extension);
+
+            $extensionEncryptedFile = null;
+
+            if($extension == 'pdf') {
+                $extensionEncryptedFile = '.lcpdf';
+            } elseif($extension == 'epub') {
+                $extensionEncryptedFile = '.lcp';
+            } else {
+                $extensionEncryptedFile = '.encrypted';
+            }
+
+            $output   = sys_get_temp_dir().DIRECTORY_SEPARATOR.$filename.$extensionEncryptedFile;
         }
 
         $command = sprintf('%s -input "%s" -profile "%s" ', $this->encryptTool, $input, $this->licenseServerProfile);
