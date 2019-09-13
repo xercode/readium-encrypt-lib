@@ -29,7 +29,7 @@ set('ssh_type', 'native');
 set('ssh_multiplexing', true);
 
 // Project name
-set('application', 'readium-encrypt-tool');
+set('application', 'encrypt-tool');
 set('keep_releases', 5);
 
 
