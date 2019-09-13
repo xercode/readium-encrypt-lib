@@ -173,7 +173,7 @@ class Encrypt
                 $extensionEncryptedFile = '.encrypted';
             }
 
-            $output = sys_get_temp_dir().DIRECTORY_SEPARATOR.$filename.$extensionEncryptedFile;
+            $output =  $this->encryptedRepository.DIRECTORY_SEPARATOR.$filename.$extensionEncryptedFile;
         }
 
         $command = sprintf('%s -input "%s" -profile "%s" ', $this->encryptTool, $input, $this->licenseServerProfile);
