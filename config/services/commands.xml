@@ -7,6 +7,7 @@
         <service class="xeBook\Readium\Encrypt\Command\EncryptCommand" id="xe_book.readium.encrypt.command.encrypt_command">
             <argument id="xe_book.readium.encrypt.encrypt" type="service"/>
             <argument id="xe_book.readium.encrypt.filesystem.aws_s3adapter" type="service"/>
+            <argument type="string">%env(resolve:MASTER_REPOSITORY)%</argument>
             <argument id="messenger.bus.default" type="service"/>
             <tag name="console.command"/>
         </service>

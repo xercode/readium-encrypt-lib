@@ -41,17 +41,28 @@ class EncryptCommand extends Command
     private $messageBus;
 
     /**
+     * @var string
+     */
+    private $masterRepository;
+
+    /**
      * EncryptCommand constructor.
      *
      * @param Encrypt             $encrypt
      * @param AwsS3Adapter        $awsS3Adapter
+     * @param string|null         $masterRepository
      * @param MessageBusInterface $messageBus
      */
-    public function __construct(Encrypt $encrypt, AwsS3Adapter $awsS3Adapter, ?MessageBusInterface $messageBus = null)
+    public function __construct(Encrypt $encrypt, AwsS3Adapter $awsS3Adapter,         ?string $masterRepository = '/tmp', ?MessageBusInterface $messageBus = null)
     {
-        $this->encrypt      = $encrypt;
-        $this->awsS3Adapter = $awsS3Adapter;
-        $this->messageBus   = $messageBus;
+        $this->encrypt                  = $encrypt;
+        $this->awsS3Adapter             = $awsS3Adapter;
+        $this->messageBus               = $messageBus;
+        $this->masterRepository         = $masterRepository;
+
+        if(!file_exists($masterRepository)) {
+            @mkdir($masterRepository, 764, true);
+        }
 
         parent::__construct(self::$defaultName);
     }
@@ -89,6 +100,13 @@ class EncryptCommand extends Command
             'optional, file path of the target protected content.  If not set put file int tmp file system.'
         );
 
+        $this->addOption(
+            'delete-source',
+            '-d',
+            InputOption::VALUE_NONE,
+            'Delete source file on end.'
+        );
+
         $this->setDescription('A command line utility for content encryption');
         $this->setHelp(
             'The goal of this cross-platform command line executable is to be usable on any kind of processing pipeline.'
@@ -122,6 +140,7 @@ class EncryptCommand extends Command
         $outputFilename      = $input->getOption('output');
         $contentId           = $input->getOption('contentId');
         $sendToLicenseServer = $input->getOption('sendToLicenseServer');
+        $deleteSource        = $input->getOption('delete-source');
 
 
         $scheme = parse_url($inputFilename, PHP_URL_SCHEME);
@@ -158,6 +177,10 @@ class EncryptCommand extends Command
 
         $io->text(json_encode($encryptResponse));
 
+        if($deleteSource == true) {
+            @unlink($sourceFile);
+        }
+
         $this->release();
 
         return 0;
@@ -172,7 +195,7 @@ class EncryptCommand extends Command
             return null;
         }
 
-        $downloadPath = sys_get_temp_dir().DIRECTORY_SEPARATOR.$filename;
+        $downloadPath = $this->masterRepository.DIRECTORY_SEPARATOR.$filename;
 
         $numberOfBytesWritten = file_put_contents($downloadPath, $response->detach());
 
