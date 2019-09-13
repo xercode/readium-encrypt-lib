@@ -42,7 +42,7 @@ class Encrypt
      */
     public function log($level, $message, array $context = array())
     {
-        if($this->logger !== null) {
+        if ($this->logger !== null) {
             $this->logger->log($level, $message, $context);
         }
     }
@@ -73,12 +73,24 @@ class Encrypt
     private $licenseServerProfile;
 
     /**
+     * @var string
+     */
+    private $masterRepository;
+
+    /**
+     * @var string
+     */
+    private $encryptedRepository;
+
+    /**
      * Encrypt constructor.
      *
      * @param string      $encryptTool
      * @param string|null $licenseServerEndpoint
      * @param string|null $licenseServerUsername
      * @param string|null $licenseServerPassword
+     * @param string|null $masterRepository
+     * @param string|null $encryptedRepository
      * @param string|null $licenseServerProfile
      */
     public function __construct(
@@ -86,9 +98,11 @@ class Encrypt
         ?string $licenseServerEndpoint = null,
         ?string $licenseServerUsername = null,
         ?string $licenseServerPassword = null,
+        ?string $masterRepository = null,
+        ?string $encryptedRepository = null,
         ?string $licenseServerProfile = 'basic'
     ) {
-        if (!file_exists($encryptTool) ) {
+        if (!file_exists($encryptTool)) {
             throw new InvalidArgumentException(
                 'The encrypt tool '.$encryptTool.' not exits.', 10
             );
@@ -105,11 +119,21 @@ class Encrypt
             );
         }
 
+        if(!file_exists($masterRepository)) {
+            @mkdir($masterRepository, 0764, true);
+        }
+
+        if(!file_exists($masterRepository)) {
+            @mkdir($encryptedRepository, 0764, true);
+        }
+
         $this->encryptTool           = $encryptTool;
         $this->licenseServerEndpoint = $licenseServerEndpoint;
         $this->licenseServerUsername = $licenseServerUsername;
         $this->licenseServerPassword = $licenseServerPassword;
-        $this->licenseServerProfile   = $licenseServerProfile;
+        $this->licenseServerProfile  = $licenseServerProfile;
+        $this->masterRepository      = $masterRepository;
+        $this->encryptedRepository   = $encryptedRepository;
     }
 
 
@@ -120,7 +144,8 @@ class Encrypt
      * @param bool        $sendToLicenseServer optional send to the License server
      * @param string|null $contentId           optional content identifier, if omitted a new one will be generated
      * @param string|null $output              optional target location for protected content (file system or http PUT)
-     *                                         optional, file path of the target protected content.  If not set put file int tmp file system.
+     *                                         optional, file path of the target protected content.  If not set put
+     *                                         file int tmp file system.
      * @return array
      */
     public function run(
@@ -135,20 +160,20 @@ class Encrypt
         }
 
         if ($output === null) {
-            $extension = pathinfo($input, 'PATHINFO_EXTENSION');
-            $filename = basename($input, $extension);
+            $extension = pathinfo($input, PATHINFO_EXTENSION);
+            $filename  = basename($input, '.'.$extension);
 
             $extensionEncryptedFile = null;
 
-            if($extension == 'pdf') {
+            if ($extension == 'pdf') {
                 $extensionEncryptedFile = '.lcpdf';
-            } elseif($extension == 'epub') {
-                $extensionEncryptedFile = '.lcp';
+            } elseif ($extension == 'epub') {
+                $extensionEncryptedFile = '.lcpepub';
             } else {
                 $extensionEncryptedFile = '.encrypted';
             }
 
-            $output   = sys_get_temp_dir().DIRECTORY_SEPARATOR.$filename.$extensionEncryptedFile;
+            $output = sys_get_temp_dir().DIRECTORY_SEPARATOR.$filename.$extensionEncryptedFile;
         }
 
         $command = sprintf('%s -input "%s" -profile "%s" ', $this->encryptTool, $input, $this->licenseServerProfile);
@@ -173,7 +198,16 @@ class Encrypt
         $outputExecCommand         = [];
         $returnExitCodeExecCommand = null;
         $returnExec                = exec($command, $outputExecCommand, $returnExitCodeExecCommand);
-        $this->log('info', 'Run Encrypt command', ['command' => $command, 'outputExecCommand' => $outputExecCommand, 'returnExitCodeExecCommand' => $returnExitCodeExecCommand, 'returnExec' => $returnExec]);
+        $this->log(
+            'info',
+            'Run Encrypt command',
+            [
+                'command'                   => $command,
+                'outputExecCommand'         => $outputExecCommand,
+                'returnExitCodeExecCommand' => $returnExitCodeExecCommand,
+                'returnExec'                => $returnExec,
+            ]
+        );
 
         if ($returnExitCodeExecCommand !== self::SUCCESS_CODE) {
             if (array_key_exists($returnExitCodeExecCommand, self::ERROR_CODES)) {

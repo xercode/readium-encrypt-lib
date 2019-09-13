@@ -9,10 +9,13 @@
             <argument type="string">%env(resolve:LICENSE_SERVER_ENDPOINT)%</argument>
             <argument type="string">%env(resolve:LICENSE_SERVER_USERNAME)%</argument>
             <argument type="string">%env(resolve:LICENSE_SERVER_PASSWORD)%</argument>
+            <argument type="string">%env(resolve:MASTER_REPOSITORY)%</argument>
+            <argument type="string">%env(resolve:ENCRYPTED_REPOSITORY)%</argument>
             <argument type="string">%env(resolve:LICENSE_SERVER_PROFILE)%</argument>
             <call method="setLogger">
                 <argument type="service" id="logger" on-invalid="ignore" />
             </call>
+
         </service>
     </services>
 </container>
